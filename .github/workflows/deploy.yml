@@ -1,0 +1,43 @@
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Backend
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_BACKEND_IP }}
+          username: ${{ secrets.EC2_BACKEND_USER }}
+          key: ${{ secrets.EC2_BACKEND_KEY }}
+          script: |
+            cd ~/fe-be/nodejs-express-mysql
+            git pull origin main
+            npm install
+            pkill node || true
+            nohup node server.js > app.log 2>&1 &
+
+  frontend:
+    runs-on: ubuntu-latest
+    needs: backend
+    steps:
+      - name: Deploy Frontend
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_FRONTEND_IP }}
+          username: ${{ secrets.EC2_FRONTEND_USER }}
+          key: ${{ secrets.EC2_FRONTEND_KEY }}
+          script: |
+            cd ~/fe-be/frontend
+            git pull origin main
+            npm install
+            npm run build
+            sudo rm -rf /var/www/html/*
+            sudo cp -r dist/* /var/www/html/
+            sudo systemctl restart nginx
