@@ -1,0 +1,18 @@
+nohup: ignoring input
+Server is running on port 8080.
+tutorials:  [
+  RowDataPacket {
+    id: 1,
+    title: 'Rishav',
+    description: 'Deployed 3 tier Application on EC2',
+    published: 1
+  }
+]
+tutorials:  [
+  RowDataPacket {
+    id: 1,
+    title: 'Rishav',
+    description: 'Deployed 3 tier Application on EC2',
+    published: 1
+  }
+]
